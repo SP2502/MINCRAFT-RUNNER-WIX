@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Minecraft Creeper Runner</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+    body {
+      background-color: #2d2d2d;
+      color: white;
+      font-family: 'Press Start 2P', cursive;
+      text-align: center;
+      margin: 0;
+    }
+
+    h1 {
+      color: #fff;
+      padding-top: 20px;
+    }
+
+    canvas {
+      background: #111;
+      display: block;
+      margin: 20px auto;
+      border: 2px solid #444;
+    }
+
+    #playAgainBtn, .difficulty-btn {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 14px;
+      padding: 10px 20px;
+      margin: 10px 5px;
+      background-color: #000;
+      color: white;
+      border: 2px solid white;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    #playAgainBtn:hover, .difficulty-btn:hover {
+      background-color: #1a1a1a;
+    }
+
+    .difficulty-container {
+      margin-top: 10px;
+    }
+
+  </style>
+</head>
+<body>
+
+  <h1>☘️ Minecraft Creeper Runner ☘️</h1>
+  <p>Press SPACE or UP Arrow to jump. Dodge the cats! Score 200 to win!</p>
+
+  <div class="difficulty-container">
+    <button class="difficulty-btn" onclick="setDifficulty('Easy')">Easy</button>
+    <button class="difficulty-btn" onclick="setDifficulty('Medium')">Medium</button>
+    <button class="difficulty-btn" onclick="setDifficulty('Hard')">Hard</button>
+    <button class="difficulty-btn" onclick="setDifficulty('Very Hard')">Very Hard</button>
+  </div>
+
+  <canvas id="gameCanvas" width="800" height="400"></canvas>
+  <button id="playAgainBtn" onclick="restartGame()">Play Again</button>
+
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    let gameSpeed = 5;
+    let score = 0;
+    let gameState = "playing";
+    let loopRunning = false;
+    let explosionTimer = 0;
+    let explosionRadius = 0;
+    let lastSpawnTime = 0;
+    let difficulty = "Medium";
+
+    const spawnRates = {
+      "Easy": 2000,
+      "Medium": 1500,
+      "Hard": 1000,
+      "Very Hard": 1000
+    };
+
+    const speedIncrements = {
+      "Easy": 0.01,
+      "Medium": 0.03,
+      "Hard": 0.06,
+      "Very Hard": 0.06
+    };
+
+    class Player {
+      constructor() {
+        this.width = 40;
+        this.height = 40;
+        this.x = 100;
+        this.y = canvas.height - this.height;
+        this.dy = 0;
+        this.gravity = 1.2;
+        this.jumpPower = -18;
+        this.grounded = true;
+      }
+
+      jump() {
+        if (this.grounded) {
+          this.dy = this.jumpPower;
+          this.grounded = false;
+        }
+      }
+
+      update() {
+        this.dy += this.gravity;
+        this.y += this.dy;
+
+        if (this.y + this.height >= canvas.height) {
+          this.y = canvas.height - this.height;
+          this.dy = 0;
+          this.grounded = true;
+        }
+      }
+
+      draw() {
+        ctx.fillStyle = "limegreen";
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+      }
+
+      reset() {
+        this.y = canvas.height - this.height;
+        this.dy = 0;
+        this.grounded = true;
+      }
+    }
+
+    class Obstacle {
+      constructor() {
+        this.width = 40;
+        this.height = 40;
+        this.x = canvas.width;
+        this.y = canvas.height - this.height;
+      }
+
+      update() {
+        this.x -= gameSpeed;
+      }
+
+      draw() {
+        ctx.fillStyle = "orange";
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+      }
+    }
+
+    let player = new Player();
+    let obstacles = [];
+
+    function spawnObstacle() {
+      obstacles.push(new Obstacle());
+    }
+
+    function resetGame() {
+      gameSpeed = (difficulty === "Very Hard") ? 8 : 5;
+      score = 0;
+      gameState = "playing";
+      lastSpawnTime = performance.now();
+      explosionTimer = 0;
+      explosionRadius = 0;
+      player.reset();
+      obstacles.length = 0;
+      document.getElementById("playAgainBtn").style.display = "none";
+
+      if (!loopRunning) {
+        loopRunning = true;
+        requestAnimationFrame(gameLoop);
+      }
+    }
+
+    function restartGame() {
+      resetGame();
+    }
+
+    function setDifficulty(level) {
+      difficulty = level;
+      restartGame();
+    }
+
+    function gameLoop(timestamp) {
+      if (gameState !== "playing") return;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      player.update();
+      player.draw();
+
+      if (timestamp - lastSpawnTime > spawnRates[difficulty]) {
+        spawnObstacle();
+        lastSpawnTime = timestamp;
+      }
+
+      for (let i = obstacles.length - 1; i >= 0; i--) {
+        const obs = obstacles[i];
+        obs.update();
+        obs.draw();
+
+        if (
+          player.x < obs.x + obs.width &&
+          player.x + player.width > obs.x &&
+          player.y < obs.y + obs.height &&
+          player.y + player.height > obs.y
+        ) {
+          gameState = "done";
+          loopRunning = false;
+          document.getElementById("playAgainBtn").style.display = "inline-block";
+          return;
+        }
+
+        if (obs.x + obs.width < 0) {
+          obstacles.splice(i, 1);
+          score++;
+          gameSpeed += speedIncrements[difficulty];
+        }
+      }
+
+      ctx.fillStyle = "#fff";
+      ctx.font = "20px 'Press Start 2P'";
+      ctx.fillText("Score: " + score, 20, 30);
+
+      if (score >= 200) {
+        if (explosionTimer === 0) {
+          explosionTimer = timestamp;
+        } else if (timestamp - explosionTimer > 1800) {
+          ctx.fillStyle = "#fff";
+          ctx.font = "24px 'Press Start 2P'";
+          ctx.fillText("💥 Mission Complete! 💥", canvas.width / 2 - 240, canvas.height / 2);
+          gameState = "done";
+          loopRunning = false;
+          document.getElementById("playAgainBtn").style.display = "inline-block";
+          return;
+        } else {
+          explosionRadius += 5;
+          ctx.beginPath();
+          ctx.arc(player.x + 20, player.y + 20, explosionRadius, 0, Math.PI * 2);
+          ctx.fillStyle = "red";
+          ctx.fill();
+        }
+      }
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    window.addEventListener("keydown", (e) => {
+      if (e.code === "Space" || e.code === "ArrowUp") {
+        player.jump();
+      }
+    });
+
+    resetGame();
+  </script>
+
+</body>
+</html>
