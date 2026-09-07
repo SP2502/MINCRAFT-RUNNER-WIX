@@ -1,0 +1,1079 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+  --green: #55a936;
+  --green-light: #86d35a;
+  --green-dark: #315f23;
+
+  --black: #090b09;
+  --dark: #111611;
+  --panel: #171d17;
+  --panel-2: #202820;
+
+  --line: #465047;
+  --text: #f4f7f4;
+  --gray: #899289;
+
+  --red: #d94a43;
+  --yellow: #e4bd45;
+
+  --font: 'Press Start 2P', monospace;
+}
+
+html {
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+
+  color: var(--text);
+  background:
+    radial-gradient(
+      circle at 50% -20%,
+      #314332 0,
+      #1a211b 38%,
+      #0c100d 80%
+    );
+
+  font-family: var(--font);
+
+  overflow-x: hidden;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+button:focus-visible {
+  outline: 3px solid var(--green-light);
+  outline-offset: 3px;
+}
+
+
+/* ---------------------------------------------------------
+   PAGE
+--------------------------------------------------------- */
+
+.game {
+  width: 100%;
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* ---------------------------------------------------------
+   TOP BAR
+--------------------------------------------------------- */
+
+.top {
+  height: 76px;
+
+  padding: 0 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background:
+    linear-gradient(
+      #1d251e,
+      #121712
+    );
+
+  border-bottom: 2px solid #303a31;
+
+  box-shadow:
+    0 5px 25px rgba(0, 0, 0, .35);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.logo-pic {
+  width: 43px;
+  height: 43px;
+
+  display: block;
+
+  image-rendering: pixelated;
+
+  border: 2px solid #84d65b;
+
+  box-shadow:
+    4px 4px 0 #000;
+}
+
+.logo h1 {
+  margin: 0;
+
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: .5px;
+}
+
+.logo small {
+  display: block;
+
+  margin-top: 5px;
+
+  color: var(--gray);
+
+  font-size: 6px;
+  letter-spacing: 1px;
+}
+
+.top-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.small-btn {
+  width: 42px;
+  height: 42px;
+
+  padding: 9px;
+
+  display: grid;
+  place-items: center;
+
+  background: #0e120e;
+
+  border: 2px solid var(--line);
+
+  cursor: pointer;
+
+  transition:
+    background .12s,
+    transform .12s,
+    border-color .12s;
+}
+
+.small-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.small-btn:hover {
+  background: #242d24;
+  border-color: #657167;
+}
+
+.small-btn:active {
+  transform: translate(2px, 2px);
+}
+
+
+/* ---------------------------------------------------------
+   MAIN
+--------------------------------------------------------- */
+
+main {
+  width: min(1180px, 96vw);
+
+  margin: 30px auto 0;
+}
+
+
+/* ---------------------------------------------------------
+   GAME BOX
+--------------------------------------------------------- */
+
+.game-box {
+  position: relative;
+
+  width: 100%;
+
+  background: #000;
+
+  border: 4px solid #050605;
+
+  box-shadow:
+    0 0 0 2px #4a534b,
+    0 18px 45px rgba(0, 0, 0, .5);
+
+  overflow: hidden;
+}
+
+#gameCanvas {
+  display: block;
+
+  width: 100%;
+  height: auto;
+
+  background: #111;
+
+  image-rendering: pixelated;
+
+  touch-action: none;
+}
+
+
+/* ---------------------------------------------------------
+   HUD
+--------------------------------------------------------- */
+
+.hud {
+  position: absolute;
+
+  top: 0;
+  left: 0;
+  right: 0;
+
+  z-index: 5;
+
+  min-height: 76px;
+
+  padding: 13px;
+
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      rgba(0, 0, 0, .42),
+      transparent
+    );
+}
+
+.hud-piece {
+  min-width: 83px;
+
+  padding: 9px 10px;
+
+  background:
+    rgba(8, 11, 8, .83);
+
+  border: 2px solid #59635a;
+
+  box-shadow:
+    3px 3px 0 rgba(0, 0, 0, .55);
+}
+
+.hud-piece span {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #818b82;
+
+  font-size: 5px;
+}
+
+.hud-piece b {
+  font-size: 10px;
+}
+
+.hud-piece.gems {
+  min-width: 72px;
+
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.hud-piece.gems svg {
+  width: 18px;
+  height: 18px;
+
+  flex-shrink: 0;
+}
+
+.hud-piece.gems b {
+  margin-top: 1px;
+}
+
+.mission {
+  flex: 1;
+
+  max-width: 390px;
+
+  margin:
+    4px auto 0;
+}
+
+.mission-top {
+  display: flex;
+  justify-content: space-between;
+
+  margin-bottom: 7px;
+
+  font-size: 5px;
+
+  color: #a5aea6;
+}
+
+.bar {
+  height: 12px;
+
+  padding: 2px;
+
+  background: #0a0d0a;
+
+  border: 2px solid #586258;
+}
+
+#barFill {
+  width: 0;
+  height: 100%;
+
+  background:
+    repeating-linear-gradient(
+      90deg,
+      #55a936 0,
+      #55a936 9px,
+      #6bbc46 9px,
+      #6bbc46 18px
+    );
+
+  transition: width .15s linear;
+}
+
+
+/* ---------------------------------------------------------
+   SCREENS
+--------------------------------------------------------- */
+
+.screen {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 10;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background:
+    rgba(0, 0, 0, .67);
+
+  backdrop-filter: blur(2px);
+}
+
+.hide {
+  display: none;
+}
+
+
+/* ---------------------------------------------------------
+   MENU CARD
+--------------------------------------------------------- */
+
+.card {
+  width: min(470px, 92%);
+
+  padding: 36px 35px;
+
+  text-align: center;
+
+  background:
+    linear-gradient(
+      145deg,
+      #242c24,
+      #121712
+    );
+
+  border: 3px solid #69736a;
+
+  box-shadow:
+    8px 8px 0 #000,
+    inset 0 0 0 2px #0c100c;
+}
+
+.small-card {
+  width: min(430px, 92%);
+}
+
+.big-creeper {
+  display: block;
+
+  width: 75px;
+  height: 75px;
+
+  margin: 0 auto 22px;
+
+  image-rendering: pixelated;
+
+  border: 3px solid var(--green-light);
+
+  box-shadow:
+    6px 6px 0 #000;
+}
+
+.card h2 {
+  margin: 0;
+
+  font-size: 27px;
+
+  line-height: 1.55;
+
+  text-shadow:
+    4px 4px 0 #000;
+}
+
+.tag {
+  margin:
+    17px 0 30px;
+
+  color: #a5aea5;
+
+  font-size: 7px;
+
+  line-height: 1.8;
+}
+
+
+/* ---------------------------------------------------------
+   DIFFICULTY
+--------------------------------------------------------- */
+
+.choose {
+  margin-bottom: 20px;
+}
+
+.choose p {
+  margin:
+    0 0 11px;
+
+  color: #7f897f;
+
+  font-size: 6px;
+}
+
+.levels {
+  display: grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap: 8px;
+}
+
+.level {
+  min-height: 42px;
+
+  background: #101410;
+
+  border: 2px solid #4b564d;
+
+  cursor: pointer;
+
+  color: #bfc6c0;
+
+  font-size: 7px;
+
+  transition:
+    background .12s,
+    border-color .12s,
+    transform .12s;
+}
+
+.level:hover {
+  background: #252e25;
+}
+
+.level:active {
+  transform: translateY(2px);
+}
+
+.level.active {
+  color: #fff;
+
+  background:
+    linear-gradient(
+      #4e912e,
+      #315f23
+    );
+
+  border-color:
+    #9cdd72;
+
+  box-shadow:
+    3px 3px 0 #000;
+}
+
+
+/* ---------------------------------------------------------
+   MAIN BUTTON
+--------------------------------------------------------- */
+
+.start-btn {
+  width: 100%;
+  min-height: 52px;
+
+  padding: 10px;
+
+  background:
+    linear-gradient(
+      #65b63d,
+      #3e7927
+    );
+
+  border:
+    3px solid #a0df79;
+
+  box-shadow:
+    5px 5px 0 #000;
+
+  cursor: pointer;
+
+  font-size: 9px;
+
+  transition:
+    filter .12s,
+    transform .12s;
+}
+
+.start-btn:hover {
+  filter: brightness(1.12);
+}
+
+.start-btn:active {
+  transform:
+    translate(3px, 3px);
+
+  box-shadow:
+    2px 2px 0 #000;
+}
+
+.help {
+  margin:
+    20px 0 0;
+
+  color: #737c74;
+
+  font-size: 5px;
+}
+
+
+/* ---------------------------------------------------------
+   SECONDARY BUTTON
+--------------------------------------------------------- */
+
+.other-btn {
+  width: 100%;
+  min-height: 48px;
+
+  margin-top: 12px;
+
+  background: #111611;
+
+  border: 2px solid #59645b;
+
+  box-shadow:
+    3px 3px 0 #000;
+
+  cursor: pointer;
+
+  font-size: 8px;
+}
+
+.other-btn:hover {
+  background: #242b24;
+}
+
+
+/* ---------------------------------------------------------
+   PAUSE
+--------------------------------------------------------- */
+
+.pause-icon {
+  width: 55px;
+  height: 55px;
+
+  margin:
+    0 auto 18px;
+
+  padding: 13px;
+
+  display: grid;
+  place-items: center;
+
+  color: #dce3dc;
+
+  background: #121712;
+
+  border: 3px solid #69746b;
+
+  box-shadow:
+    5px 5px 0 #000;
+}
+
+.pause-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+
+/* ---------------------------------------------------------
+   GAME OVER / WIN
+--------------------------------------------------------- */
+
+.dead-icon,
+.win-icon {
+  width: 58px;
+  height: 58px;
+
+  margin:
+    0 auto 18px;
+
+  display: grid;
+  place-items: center;
+
+  font-size: 24px;
+
+  border: 3px solid;
+
+  box-shadow:
+    5px 5px 0 #000;
+}
+
+.dead-icon {
+  background: #4a2020;
+  border-color: #d85c58;
+}
+
+.win-icon {
+  padding: 12px;
+
+  color: #f1d75b;
+
+  background: #44481d;
+  border-color: #d8db68;
+}
+
+.win-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.message {
+  margin:
+    17px 0 24px;
+
+  color: #969f97;
+
+  font-size: 7px;
+
+  line-height: 1.9;
+}
+
+
+/* ---------------------------------------------------------
+   STATS
+--------------------------------------------------------- */
+
+.stats {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap: 7px;
+
+  margin-bottom: 20px;
+}
+
+.stats > div {
+  min-height: 68px;
+
+  padding: 12px 4px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  background: #0e120e;
+
+  border: 2px solid #3d473f;
+}
+
+.stats span {
+  margin-bottom: 10px;
+
+  color: #747e76;
+
+  font-size: 5px;
+}
+
+.stats b {
+  font-size: 11px;
+}
+
+
+/* ---------------------------------------------------------
+   PHONE CONTROLS
+--------------------------------------------------------- */
+
+.phone-controls {
+  display: none;
+
+  justify-content: center;
+
+  margin-top: 15px;
+}
+
+#jumpBtn {
+  width: min(300px, 85vw);
+  height: 58px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  background:
+    linear-gradient(
+      #65b63d,
+      #3e7927
+    );
+
+  border:
+    3px solid #a0df79;
+
+  box-shadow:
+    5px 5px 0 #000;
+
+  cursor: pointer;
+
+  font-size: 9px;
+
+  touch-action: manipulation;
+}
+
+#jumpBtn svg {
+  width: 21px;
+  height: 21px;
+}
+
+#jumpBtn:active {
+  transform:
+    translate(3px, 3px);
+
+  box-shadow:
+    2px 2px 0 #000;
+}
+
+
+/* ---------------------------------------------------------
+   FOOTER
+--------------------------------------------------------- */
+
+footer {
+  min-height: 60px;
+
+  padding:
+    18px 10px 25px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+
+  color: #5f695f;
+
+  font-size: 5px;
+}
+
+footer i {
+  width: 3px;
+  height: 3px;
+
+  display: block;
+
+  background: #566056;
+}
+
+
+/* ---------------------------------------------------------
+   DESKTOP
+--------------------------------------------------------- */
+
+@media (min-width: 1000px) {
+
+  #gameCanvas {
+    cursor: pointer;
+  }
+
+}
+
+
+/* ---------------------------------------------------------
+   TABLET
+--------------------------------------------------------- */
+
+@media (max-width: 850px) {
+
+  main {
+    width: 98vw;
+
+    margin-top: 18px;
+  }
+
+  .top {
+    padding: 0 17px;
+  }
+
+  .hud {
+    padding: 9px;
+    gap: 7px;
+  }
+
+  .hud-piece {
+    min-width: 70px;
+    padding: 7px 8px;
+  }
+
+  .hud-piece span {
+    font-size: 4px;
+  }
+
+  .hud-piece b {
+    font-size: 8px;
+  }
+
+  .mission {
+    max-width: 300px;
+  }
+
+}
+
+
+/* ---------------------------------------------------------
+   PHONE
+--------------------------------------------------------- */
+
+@media (max-width: 650px) {
+
+  .top {
+    height: 62px;
+    padding: 0 11px;
+  }
+
+  .logo {
+    gap: 9px;
+  }
+
+  .logo-pic {
+    width: 35px;
+    height: 35px;
+  }
+
+  .logo h1 {
+    font-size: 8px;
+  }
+
+  .logo small {
+    font-size: 4px;
+    margin-top: 4px;
+  }
+
+  .small-btn {
+    width: 36px;
+    height: 36px;
+    padding: 7px;
+  }
+
+  main {
+    width: 100%;
+    margin-top: 12px;
+  }
+
+  .game-box {
+    border-width: 3px;
+  }
+
+  .hud {
+    min-height: 55px;
+    padding: 6px;
+
+    gap: 5px;
+  }
+
+  .hud-piece {
+    min-width: 60px;
+    padding: 6px;
+  }
+
+  .hud-piece span {
+    margin-bottom: 5px;
+    font-size: 4px;
+  }
+
+  .hud-piece b {
+    font-size: 7px;
+  }
+
+  .hud-piece.gems {
+    min-width: 54px;
+    gap: 4px;
+  }
+
+  .hud-piece.gems svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  .mission {
+    position: absolute;
+
+    left: 7px;
+    right: 7px;
+    top: 58px;
+
+    max-width: none;
+
+    padding: 5px;
+
+    background:
+      rgba(0, 0, 0, .55);
+  }
+
+  .mission-top {
+    margin-bottom: 4px;
+    font-size: 4px;
+  }
+
+  .bar {
+    height: 9px;
+  }
+
+  .phone-controls {
+    display: flex;
+  }
+
+  .card {
+    padding:
+      24px 17px;
+  }
+
+  .big-creeper {
+    width: 57px;
+    height: 57px;
+
+    margin-bottom: 16px;
+  }
+
+  .card h2 {
+    font-size: 20px;
+  }
+
+  .tag {
+    font-size: 5px;
+    margin:
+      13px 0 21px;
+  }
+
+  .choose p {
+    font-size: 5px;
+  }
+
+  .level {
+    min-height: 38px;
+    font-size: 5px;
+  }
+
+  .start-btn {
+    min-height: 48px;
+    font-size: 7px;
+  }
+
+  .help {
+    font-size: 4px;
+  }
+
+  .stats {
+    gap: 4px;
+  }
+
+  .stats > div {
+    min-height: 61px;
+  }
+
+  .stats span {
+    font-size: 4px;
+  }
+
+  .stats b {
+    font-size: 8px;
+  }
+
+  .message {
+    font-size: 5px;
+  }
+
+  footer {
+    font-size: 4px;
+  }
+
+}
+
+
+/* ---------------------------------------------------------
+   SMALL PHONE
+--------------------------------------------------------- */
+
+@media (max-width: 390px) {
+
+  .levels {
+    grid-template-columns: 1fr;
+  }
+
+  .level {
+    min-height: 34px;
+  }
+
+  .card {
+    padding:
+      19px 13px;
+  }
+
+  .card h2 {
+    font-size: 17px;
+  }
+
+  .big-creeper {
+    width: 48px;
+    height: 48px;
+  }
+
+  footer {
+    gap: 6px;
+  }
+
+}
+
+
+/* ---------------------------------------------------------
+   REDUCED MOTION
+--------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+  }
+
+}
